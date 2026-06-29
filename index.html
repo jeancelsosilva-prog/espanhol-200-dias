@@ -120,6 +120,11 @@
     border-bottom: 1px solid var(--border);
     overflow-x: auto;
     scrollbar-width: none;
+    /* Torna a barra de navegação aderente ao topo abaixo do cabeçalho */
+    position: sticky;
+    top: 64px;
+    z-index: 90;
+    background: var(--surface);
   }
 
   nav::-webkit-scrollbar { display: none; }
@@ -200,6 +205,79 @@
     font-size: 16px;
     font-weight: 600;
     color: var(--text);
+  }
+
+  /* ===== Accordion for Phases ===== */
+  .phase-block {
+    cursor: pointer;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 16px;
+    margin-bottom: 16px;
+    background: var(--surface);
+  }
+  .phase-block .phase-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .phase-block .phase-title-group {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .phase-block .phase-header .phase-title-group .phase-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .phase-block .phase-header .phase-title-group .phase-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .phase-block .phase-header .phase-title-group .phase-days {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    color: var(--muted);
+  }
+  .phase-block .toggle-icon {
+    font-size: 16px;
+    color: var(--muted);
+    transition: transform 0.3s ease;
+  }
+  .phase-block.collapsed .toggle-icon {
+    transform: rotate(-90deg);
+  }
+  .phase-block .phase-body {
+    margin-top: 12px;
+  }
+  .phase-block.collapsed .phase-body {
+    display: none;
+  }
+
+  /* Scroll to top button */
+  #scrollTopBtn {
+    position: fixed;
+    bottom: 32px;
+    right: 20px;
+    background: var(--accent);
+    color: var(--bg);
+    border: none;
+    padding: 10px 14px;
+    border-radius: 4px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 12px;
+    cursor: pointer;
+    display: none;
+    z-index: 1000;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  }
+  #scrollTopBtn.show {
+    display: block;
   }
 
   .card h3 {
@@ -666,11 +744,11 @@
         <div class="progress-fill" id="progress-fill" style="width:0.5%"></div>
       </div>
       <div class="progress-labels">
-        <span class="phase-marker" onclick="switchTab('fases')">F1 D1</span>
-        <span class="phase-marker" onclick="switchTab('fases')">F2 D41</span>
-        <span class="phase-marker" onclick="switchTab('fases')">F3 D81</span>
-        <span class="phase-marker" onclick="switchTab('fases')">F4 D121</span>
-        <span class="phase-marker" onclick="switchTab('fases')">F5 D161</span>
+        <span class="phase-marker" onclick="switchTab('fases')" title="Início da Fase 1 (Dia 1)" data-target="fase1">F1 D1</span>
+        <span class="phase-marker" onclick="switchTab('fases')" title="Início da Fase 2 (Dia 41)" data-target="fase2">F2 D41</span>
+        <span class="phase-marker" onclick="switchTab('fases')" title="Início da Fase 3 (Dia 81)" data-target="fase3">F3 D81</span>
+        <span class="phase-marker" onclick="switchTab('fases')" title="Início da Fase 4 (Dia 121)" data-target="fase4">F4 D121</span>
+        <span class="phase-marker" onclick="switchTab('fases')" title="Início da Fase 5 (Dia 161)" data-target="fase5">F5 D161</span>
       </div>
     </div>
   </div>
@@ -772,98 +850,133 @@
 <div class="section" id="fases">
 
   <div class="phase-block p1">
-    <div class="phase-label">Fase 1</div>
-    <div class="phase-title">Fundação Sonora</div>
-    <div class="phase-days">Dias 1–40 · ~6 semanas</div>
-    <p style="font-size:13px; color:var(--muted); margin-bottom:12px;">Construir a base auditiva, desmontar o portunhol, internalizar os sons do espanhol e criar hábito de exposição diária.</p>
-    <ul class="item-list">
-      <li><span class="dot dot-phase1"></span>Diagnóstico Dia 1: gravação oral + teste de compreensão de entrada</li>
-      <li><span class="dot dot-phase1"></span>Fluency Academy: unidades básicas com foco em som e ritmo da língua</li>
-      <li><span class="dot dot-phase1"></span>Drops: categorias — saudações, números, rotina, corpo, família, alimentos</li>
-      <li><span class="dot dot-phase1"></span>Uber: músicas lentas em espanhol (reggaeton lento, baladas), podcasts para iniciantes</li>
-      <li><span class="dot dot-phase1"></span>Oral: shadowing de frases da aula, descrição da rotina em 3–5 frases simples</li>
-      <li><span class="dot dot-phase1"></span>Desportuguesização: RR vs R, LL/Y, vogais abertas, H mudo, J/G</li>
-      <li><span class="dot dot-phase1"></span>Gramática: apenas presente e ser/estar quando necessário para produção</li>
-    </ul>
-    <div style="margin-top:14px;">
-      <strong style="font-size:11px; font-family:'Space Mono'; color:var(--phase1);">MARCO — DIA 40:</strong>
-      <p style="font-size:12px; margin-top:4px;">Compreender 30–40% de input simples e lento. Apresentar-se em espanhol sem portunhol. Reconhecer sons característicos do idioma.</p>
+    <div class="phase-header">
+      <div class="phase-title-group">
+        <div class="phase-label">Fase 1</div>
+        <div class="phase-title">Fundação Sonora</div>
+        <div class="phase-days">Dias 1–40 · ~6 semanas</div>
+      </div>
+      <div class="toggle-icon">▼</div>
+    </div>
+    <div class="phase-body">
+      <p style="font-size:13px; color:var(--muted); margin-bottom:12px;">Construir a base auditiva, desmontar o portunhol, internalizar os sons do espanhol e criar hábito de exposição diária.</p>
+      <ul class="item-list">
+        <li><span class="dot dot-phase1"></span>Diagnóstico Dia 1: gravação oral + teste de compreensão de entrada</li>
+        <li><span class="dot dot-phase1"></span>Fluency Academy: unidades básicas com foco em som e ritmo da língua</li>
+        <li><span class="dot dot-phase1"></span>Drops: categorias — saudações, números, rotina, corpo, família, alimentos</li>
+        <li><span class="dot dot-phase1"></span>Uber: músicas lentas em espanhol (reggaeton lento, baladas), podcasts para iniciantes</li>
+        <li><span class="dot dot-phase1"></span>Oral: shadowing de frases da aula, descrição da rotina em 3–5 frases simples</li>
+        <li><span class="dot dot-phase1"></span>Desportuguesização: RR vs R, LL/Y, vogais abertas, H mudo, J/G</li>
+        <li><span class="dot dot-phase1"></span>Gramática: apenas presente e ser/estar quando necessário para produção</li>
+      </ul>
+      <div style="margin-top:14px;">
+        <strong style="font-size:11px; font-family:'Space Mono'; color:var(--phase1);">MARCO — DIA 40:</strong>
+        <p style="font-size:12px; margin-top:4px;">Compreender 30–40% de input simples e lento. Apresentar-se em espanhol sem portunhol. Reconhecer sons característicos do idioma.</p>
+      </div>
     </div>
   </div>
 
-  <div class="phase-block p2">
-    <div class="phase-label">Fase 2</div>
-    <div class="phase-title">Vocabulário Funcional</div>
-    <div class="phase-days">Dias 41–80 · ~6 semanas</div>
-    <p style="font-size:13px; color:var(--muted); margin-bottom:12px;">Expandir vocabulário cotidiano funcional, construir frases mais longas, começar a contornar palavras desconhecidas.</p>
-    <ul class="item-list">
-      <li><span class="dot dot-phase2"></span>Fluency Academy: unidades intermediárias baixas com frases em contexto</li>
-      <li><span class="dot dot-phase2"></span>Drops: trabalho, transporte, sentimentos, lazer, lugares, viagem</li>
-      <li><span class="dot dot-phase2"></span>Uber: Español con Juan, Dreaming Spanish nível iniciante/básico</li>
-      <li><span class="dot dot-phase2"></span>Oral: substituição de elementos em frases, respostas pessoais, 2–3 min sem roteiro</li>
-      <li><span class="dot dot-phase2"></span>Séries: La Casa de Papel ou Club de Cuervos com legenda em espanhol</li>
-      <li><span class="dot dot-phase2"></span>Gramática: pretérito indefinido, verbos reflexivos, quando bloqueiam a compreensão</li>
-    </ul>
-    <div style="margin-top:14px;">
-      <strong style="font-size:11px; font-family:'Space Mono'; color:var(--phase2);">MARCO — DIA 80:</strong>
-      <p style="font-size:12px; margin-top:4px;">50–60% de compreensão auditiva em input adaptado. Falar por 3–5 min sobre temas conhecidos. Dependência do portunhol: baixa.</p>
+  <div class="phase-block p2 collapsed">
+    <div class="phase-header">
+      <div class="phase-title-group">
+        <div class="phase-label">Fase 2</div>
+        <div class="phase-title">Vocabulário Funcional</div>
+        <div class="phase-days">Dias 41–80 · ~6 semanas</div>
+      </div>
+      <div class="toggle-icon">▼</div>
+    </div>
+    <div class="phase-body">
+      <p style="font-size:13px; color:var(--muted); margin-bottom:12px;">Expandir vocabulário cotidiano funcional, construir frases mais longas, começar a contornar palavras desconhecidas.</p>
+      <ul class="item-list">
+        <li><span class="dot dot-phase2"></span>Fluency Academy: unidades intermediárias baixas com frases em contexto</li>
+        <li><span class="dot dot-phase2"></span>Drops: trabalho, transporte, sentimentos, lazer, lugares, viagem</li>
+        <li><span class="dot dot-phase2"></span>Uber: Español con Juan, Dreaming Spanish nível iniciante/básico</li>
+        <li><span class="dot dot-phase2"></span>Oral: substituição de elementos em frases, respostas pessoais, 2–3 min sem roteiro</li>
+        <li><span class="dot dot-phase2"></span>Séries: La Casa de Papel ou Club de Cuervos com legenda em espanhol</li>
+        <li><span class="dot dot-phase2"></span>Gramática: pretérito indefinido, verbos reflexivos, quando bloqueiam a compreensão</li>
+      </ul>
+      <div style="margin-top:14px;">
+        <strong style="font-size:11px; font-family:'Space Mono'; color:var(--phase2);">MARCO — DIA 80:</strong>
+        <p style="font-size:12px; margin-top:4px;">50–60% de compreensão auditiva em input adaptado. Falar por 3–5 min sobre temas conhecidos. Dependência do portunhol: baixa.</p>
+      </div>
     </div>
   </div>
 
-  <div class="phase-block p3">
-    <div class="phase-label">Fase 3</div>
-    <div class="phase-title">Fluência Progressiva</div>
-    <div class="phase-days">Dias 81–120 · ~6 semanas</div>
-    <p style="font-size:13px; color:var(--muted); margin-bottom:12px;">Aumentar velocidade de processamento, reduzir pausas, consumir conteúdo mais natural com menos suporte.</p>
-    <ul class="item-list">
-      <li><span class="dot dot-phase3"></span>Fluency Academy: nível intermediário, conteúdos mais rápidos e naturais</li>
-      <li><span class="dot dot-phase3"></span>Drops: música, cinema, jogos, negócios, tecnologia</li>
-      <li><span class="dot dot-phase3"></span>Uber: podcasts nativos (lento-médio), episódios de séries em áudio</li>
-      <li><span class="dot dot-phase3"></span>Oral: reconto de histórias, resumos de episódios, gravações de 3–5 min</li>
-      <li><span class="dot dot-phase3"></span>Redução gradual de legendas: espanhol → sem legenda em trechos curtos</li>
-      <li><span class="dot dot-phase3"></span>Introdução de leitura: artigos curtos, letras de músicas analisadas</li>
-    </ul>
-    <div style="margin-top:14px;">
-      <strong style="font-size:11px; font-family:'Space Mono'; color:var(--phase3);">MARCO — DIA 120:</strong>
-      <p style="font-size:12px; margin-top:4px;">65–70% compreensão em conteúdo semi-natural. Falar 5+ min sobre qualquer tema familiar. Pausas notavelmente reduzidas.</p>
+  <div class="phase-block p3 collapsed">
+    <div class="phase-header">
+      <div class="phase-title-group">
+        <div class="phase-label">Fase 3</div>
+        <div class="phase-title">Fluência Progressiva</div>
+        <div class="phase-days">Dias 81–120 · ~6 semanas</div>
+      </div>
+      <div class="toggle-icon">▼</div>
+    </div>
+    <div class="phase-body">
+      <p style="font-size:13px; color:var(--muted); margin-bottom:12px;">Aumentar velocidade de processamento, reduzir pausas, consumir conteúdo mais natural com menos suporte.</p>
+      <ul class="item-list">
+        <li><span class="dot dot-phase3"></span>Fluency Academy: nível intermediário, conteúdos mais rápidos e naturais</li>
+        <li><span class="dot dot-phase3"></span>Drops: música, cinema, jogos, negócios, tecnologia</li>
+        <li><span class="dot dot-phase3"></span>Uber: podcasts nativos (lento-médio), episódios de séries em áudio</li>
+        <li><span class="dot dot-phase3"></span>Oral: reconto de histórias, resumos de episódios, gravações de 3–5 min</li>
+        <li><span class="dot dot-phase3"></span>Redução gradual de legendas: espanhol → sem legenda em trechos curtos</li>
+        <li><span class="dot dot-phase3"></span>Introdução de leitura: artigos curtos, letras de músicas analisadas</li>
+      </ul>
+      <div style="margin-top:14px;">
+        <strong style="font-size:11px; font-family:'Space Mono'; color:var(--phase3);">MARCO — DIA 120:</strong>
+        <p style="font-size:12px; margin-top:4px;">65–70% compreensão em conteúdo semi-natural. Falar 5+ min sobre qualquer tema familiar. Pausas notavelmente reduzidas.</p>
+      </div>
     </div>
   </div>
 
-  <div class="phase-block p4">
-    <div class="phase-label">Fase 4</div>
-    <div class="phase-title">Autonomia Comunicativa</div>
-    <div class="phase-days">Dias 121–160 · ~6 semanas</div>
-    <p style="font-size:13px; color:var(--muted); margin-bottom:12px;">Expor-se a espanhol nativo sem suporte. Desenvolver estratégias para contornar vocabulário desconhecido. Consolidar fala espontânea.</p>
-    <ul class="item-list">
-      <li><span class="dot dot-phase4"></span>Fluency Academy: conteúdos nativos, variedades regionais</li>
-      <li><span class="dot dot-phase4"></span>Uber: podcasts nativos em velocidade normal, notícias em espanhol</li>
-      <li><span class="dot dot-phase4"></span>Oral: improviso sobre temas novos, defesa de opiniões, narração de experiências</li>
-      <li><span class="dot dot-phase4"></span>Interação: comentários em espanhol, encontrar parceiro de conversação</li>
-      <li><span class="dot dot-phase4"></span>Jogos: jogar em espanhol, interagir em comunidades hispânicas</li>
-    </ul>
-    <div style="margin-top:14px;">
-      <strong style="font-size:11px; font-family:'Space Mono'; color:var(--phase4);">MARCO — DIA 160:</strong>
-      <p style="font-size:12px; margin-top:4px;">75–80% compreensão em fala nativa. Comunicação funcional real com falantes nativos. Mínima dependência de tradução.</p>
+  <div class="phase-block p4 collapsed">
+    <div class="phase-header">
+      <div class="phase-title-group">
+        <div class="phase-label">Fase 4</div>
+        <div class="phase-title">Autonomia Comunicativa</div>
+        <div class="phase-days">Dias 121–160 · ~6 semanas</div>
+      </div>
+      <div class="toggle-icon">▼</div>
+    </div>
+    <div class="phase-body">
+      <p style="font-size:13px; color:var(--muted); margin-bottom:12px;">Expor-se a espanhol nativo sem suporte. Desenvolver estratégias para contornar vocabulário desconhecido. Consolidar fala espontânea.</p>
+      <ul class="item-list">
+        <li><span class="dot dot-phase4"></span>Fluency Academy: conteúdos nativos, variedades regionais</li>
+        <li><span class="dot dot-phase4"></span>Uber: podcasts nativos em velocidade normal, notícias em espanhol</li>
+        <li><span class="dot dot-phase4"></span>Oral: improviso sobre temas novos, defesa de opiniões, narração de experiências</li>
+        <li><span class="dot dot-phase4"></span>Interação: comentários em espanhol, encontrar parceiro de conversação</li>
+        <li><span class="dot dot-phase4"></span>Jogos: jogar em espanhol, interagir em comunidades hispânicas</li>
+      </ul>
+      <div style="margin-top:14px;">
+        <strong style="font-size:11px; font-family:'Space Mono'; color:var(--phase4);">MARCO — DIA 160:</strong>
+        <p style="font-size:12px; margin-top:4px;">75–80% compreensão em fala nativa. Comunicação funcional real com falantes nativos. Mínima dependência de tradução.</p>
+      </div>
     </div>
   </div>
 
-  <div class="phase-block p5">
-    <div class="phase-label">Fase 5</div>
-    <div class="phase-title">Consolidação e Domínio</div>
-    <div class="phase-days">Dias 161–200 · ~6 semanas</div>
-    <p style="font-size:13px; color:var(--muted); margin-bottom:12px;">Estabilizar o nível alcançado, aprofundar em temas de interesse e preparar-se para manutenção pós-programa.</p>
-    <ul class="item-list">
-      <li><span class="dot dot-phase5"></span>Conteúdo exclusivamente nativo e autêntico</li>
-      <li><span class="dot dot-phase5"></span>Uber: qualquer podcast ou conteúdo de interesse real</li>
-      <li><span class="dot dot-phase5"></span>Oral: debates, explicações, monólogos de 10+ min, gravações completas</li>
-      <li><span class="dot dot-phase5"></span>Fluency Academy: consolidação das lacunas identificadas ao longo do plano</li>
-      <!-- Novo item: prática de criação de conteúdo em espanhol para consolidar fluência -->
-      <li><span class="dot dot-phase5"></span>Produção de conteúdo em espanhol (roteiro, texto ou diário) para prática e portfólio</li>
-      <li><span class="dot dot-phase5"></span>Plano de manutenção pós-Dia 200</li>
-    </ul>
-    <div style="margin-top:14px;">
-      <strong style="font-size:11px; font-family:'Space Mono'; color:var(--phase5);">MARCO — DIA 200:</strong>
-      <p style="font-size:12px; margin-top:4px;">Domínio funcional geral. B1–B2 estimado. Compreensão auditiva autônoma. Fala espontânea real. Portunhol eliminado.</p>
+  <div class="phase-block p5 collapsed">
+    <div class="phase-header">
+      <div class="phase-title-group">
+        <div class="phase-label">Fase 5</div>
+        <div class="phase-title">Consolidação e Domínio</div>
+        <div class="phase-days">Dias 161–200 · ~6 semanas</div>
+      </div>
+      <div class="toggle-icon">▼</div>
+    </div>
+    <div class="phase-body">
+      <p style="font-size:13px; color:var(--muted); margin-bottom:12px;">Estabilizar o nível alcançado, aprofundar em temas de interesse e preparar-se para manutenção pós-programa.</p>
+      <ul class="item-list">
+        <li><span class="dot dot-phase5"></span>Conteúdo exclusivamente nativo e autêntico</li>
+        <li><span class="dot dot-phase5"></span>Uber: qualquer podcast ou conteúdo de interesse real</li>
+        <li><span class="dot dot-phase5"></span>Oral: debates, explicações, monólogos de 10+ min, gravações completas</li>
+        <li><span class="dot dot-phase5"></span>Fluency Academy: consolidação das lacunas identificadas ao longo do plano</li>
+        <!-- Novo item: prática de criação de conteúdo em espanhol para consolidar fluência -->
+        <li><span class="dot dot-phase5"></span>Produção de conteúdo em espanhol (roteiro, texto ou diário) para prática e portfólio</li>
+        <li><span class="dot dot-phase5"></span>Plano de manutenção pós-Dia 200</li>
+      </ul>
+      <div style="margin-top:14px;">
+        <strong style="font-size:11px; font-family:'Space Mono'; color:var(--phase5);">MARCO — DIA 200:</strong>
+        <p style="font-size:12px; margin-top:4px;">Domínio funcional geral. B1–B2 estimado. Compreensão auditiva autônoma. Fala espontânea real. Portunhol eliminado.</p>
+      </div>
     </div>
   </div>
 
@@ -1087,13 +1200,13 @@
 
     <div class="form-group">
       <label>Dia do programa (1–200)</label>
-      <input type="number" id="ci-dia" min="1" max="200" value="1" placeholder="Ex: 14">
+      <input type="number" id="ci-dia" min="1" max="200" value="1" placeholder="Ex: 14" title="Informe o dia atual do plano de 1 a 200.">
     </div>
 
     <div class="two-col">
       <div class="form-group">
         <label>Tipo de sessão hoje</label>
-        <select id="ci-sessao">
+        <select id="ci-sessao" title="Escolha o tipo de sessão realizada hoje.">
           <option value="">Selecione...</option>
           <option value="completa">Completa (90–120 min)</option>
           <option value="padrao">Padrão (60–75 min)</option>
@@ -1103,7 +1216,7 @@
       </div>
       <div class="form-group">
         <label>Tipo de dia</label>
-        <select id="ci-tipo-dia">
+        <select id="ci-tipo-dia" title="Selecione o tipo de dia (folga, pós‑plantão, plantão etc.).">
           <option value="">Selecione...</option>
           <option value="folga-ok">Folga recuperado</option>
           <option value="folga-cansado">Folga cansado</option>
@@ -1115,41 +1228,41 @@
 
     <div class="form-group">
       <label>Fluency Academy — o que foi estudado</label>
-      <input type="text" id="ci-fluency" placeholder="Ex: Unidade 3 — verbos de movimento, shadowing feito">
+      <input type="text" id="ci-fluency" placeholder="Ex: Unidade 3 — verbos de movimento, shadowing feito" title="Descreva resumidamente a unidade ou tema estudado na Fluency Academy.">
     </div>
 
     <div class="form-group">
       <label>Drops — feito? (tempo e categorias)</label>
-      <input type="text" id="ci-drops" placeholder="Ex: 12 min, categorias: transporte e sentimentos">
+      <input type="text" id="ci-drops" placeholder="Ex: 12 min, categorias: transporte e sentimentos" title="Informe quanto tempo dedicou ao Drops e quais categorias revisou.">
     </div>
 
     <div class="form-group">
       <label>Escuta ativa (conteúdo e tempo)</label>
-      <input type="text" id="ci-escuta-ativa" placeholder="Ex: Dreaming Spanish 20 min, entendi umas 50%">
+      <input type="text" id="ci-escuta-ativa" placeholder="Ex: Dreaming Spanish 20 min, entendi umas 50%" title="Descreva o conteúdo e duração da sua escuta ativa (podcast, vídeo, etc.).">
     </div>
 
     <div class="form-group">
       <label>Escuta no tempo morto / Uber (somente áudio)</label>
       <!-- Updated placeholder to emphasize safe listening without manipulating the phone while driving -->
-      <input type="text" id="ci-escuta-morto" placeholder="Ex: 45 min de música em espanhol, shadowing (sem mexer no celular)">
+      <input type="text" id="ci-escuta-morto" placeholder="Ex: 45 min de música em espanhol, shadowing (sem mexer no celular)" title="Anote o áudio ouvido durante deslocamentos, sem leitura ou manipulação do celular.">
     </div>
 
     <div class="form-group">
       <label>Compreensão estimada (%)</label>
       <div class="range-group">
-        <input type="range" id="ci-compreensao" min="0" max="100" value="40" oninput="document.getElementById('compr-val').textContent=this.value">
+        <input type="range" id="ci-compreensao" min="0" max="100" value="40" title="Deslize para estimar o percentual de compreensão do conteúdo." oninput="document.getElementById('compr-val').textContent=this.value">
         <div class="range-val" id="compr-val">40</div>
       </div>
     </div>
 
     <div class="form-group">
       <label>Minutos de fala sem roteiro</label>
-      <input type="number" id="ci-fala" min="0" max="60" placeholder="Ex: 5">
+      <input type="number" id="ci-fala" min="0" max="60" placeholder="Ex: 5" title="Quanto tempo você conseguiu falar em espanhol sem roteiro hoje.">
     </div>
 
     <div class="form-group">
       <label>Dependência do portunhol</label>
-      <select id="ci-portuhol">
+      <select id="ci-portuhol" title="Avalie seu nível de dependência do portunhol no dia.">
         <option value="">Selecione...</option>
         <option value="baixa">Baixa</option>
         <option value="media">Média</option>
@@ -1160,24 +1273,24 @@
     <!-- Campo adicional: criação de conteúdo em espanhol / YouTube -->
     <div class="form-group">
       <label>Criação de conteúdo em espanhol (opcional)</label>
-      <textarea id="ci-criacao" placeholder="Ex: Escrevi um roteiro ou texto de 5 min em espanhol"></textarea>
+      <textarea id="ci-criacao" placeholder="Ex: Escrevi um roteiro, texto ou diário de 5 min em espanhol" title="Descreva qualquer conteúdo criado em espanhol (roteiro, texto, diário)."></textarea>
     </div>
 
     <div class="two-col">
       <div class="form-group">
         <label>Principal dificuldade</label>
-        <textarea id="ci-dificuldade" placeholder="Ex: Velocidade do áudio, vocabulário de sentimentos, pronúncia do RR..."></textarea>
+        <textarea id="ci-dificuldade" placeholder="Ex: Velocidade do áudio, vocabulário de sentimentos, pronúncia do RR..." title="Relate a maior dificuldade encontrada no estudo de hoje."></textarea>
       </div>
       <div class="form-group">
         <label>Principal avanço</label>
-        <textarea id="ci-avanco" placeholder="Ex: Entendi um trecho inteiro sem pausar, usei 'sin embargo' espontaneamente..."></textarea>
+        <textarea id="ci-avanco" placeholder="Ex: Entendi um trecho inteiro sem pausar, usei 'sin embargo' espontaneamente..." title="Descreva o principal progresso ou conquista do dia."></textarea>
       </div>
     </div>
 
     <div class="form-group">
       <label>Energia e motivação (0–10)</label>
       <div class="range-group">
-        <input type="range" id="ci-energia" min="0" max="10" value="7" oninput="document.getElementById('energ-val').textContent=this.value">
+        <input type="range" id="ci-energia" min="0" max="10" value="7" title="Avalie sua energia e motivação de 0 a 10." oninput="document.getElementById('energ-val').textContent=this.value;updateEnergyColor(parseInt(this.value));">
         <div class="range-val" id="energ-val">7</div>
       </div>
     </div>
@@ -1639,6 +1752,7 @@ function analisarLocal() {
       case 'zero': return 'sem estudo';
       default: return 'não informada';
     }
+  // nothing else changed here
   }
   // Mapeamento de tipo de dia para texto amigável
   function mapTipoDia(value) {
@@ -1824,6 +1938,101 @@ function exportarCheckins() {
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
 }
+
+// ===================== FASE ACCORDION AND SCROLL TOP =====================
+// Setup accordion behavior for phases and show scroll-to-top button
+function setupPhaseAccordions() {
+  const blocks = document.querySelectorAll('.phase-block');
+  blocks.forEach(block => {
+    const header = block.querySelector('.phase-header');
+    if (header) {
+      header.addEventListener('click', function(e) {
+        block.classList.toggle('collapsed');
+        // Atualiza o ícone de expansão/colapso e título explicativo
+        const icon = block.querySelector('.toggle-icon');
+        const title = block.classList.contains('collapsed') ? 'Clique para expandir' : 'Clique para recolher';
+        if (icon) {
+          icon.textContent = block.classList.contains('collapsed') ? '►' : '▼';
+        }
+        // Aplica o título ao cabeçalho para acessibilidade
+        header.setAttribute('title', title);
+      });
+    }
+  });
+}
+
+// Conecta marcadores de fases da linha de progresso a seus respectivos blocos.
+function setupPhaseMarkers() {
+  const markers = document.querySelectorAll('.phase-marker');
+  markers.forEach(marker => {
+    marker.addEventListener('click', () => {
+      const targetId = marker.dataset.target;
+      if (targetId) {
+        // Aguarda a troca de aba para garantir que os elementos estejam visíveis
+        setTimeout(() => {
+          const targetEl = document.getElementById(targetId);
+          if (targetEl) {
+            targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }, 150);
+      }
+    });
+  });
+}
+
+function setupScrollTopButton() {
+  const btn = document.getElementById('scrollTopBtn');
+  if (!btn) return;
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 400) {
+      btn.classList.add('show');
+    } else {
+      btn.classList.remove('show');
+    }
+  });
+  btn.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+}
+
+// Atualizar cor do valor de energia dependendo da faixa (baixa, média ou alta)
+function updateEnergyColor(val) {
+  const energValEl = document.getElementById('energ-val');
+  if (!energValEl) return;
+  let color;
+  if (val <= 3) {
+    color = 'var(--phase4)'; // vermelho-alaranjado para baixa energia
+  } else if (val <= 7) {
+    color = 'var(--accent)'; // amarelo para energia média
+  } else {
+    color = 'var(--accent3)'; // verde para alta energia
+  }
+  energValEl.style.color = color;
+}
+
+// Initialize features after DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+  setupPhaseAccordions();
+  setupScrollTopButton();
+  setupPhaseMarkers();
+  // Ajustar ícones de fases com base no estado inicial
+  document.querySelectorAll('.phase-block').forEach(block => {
+    const icon = block.querySelector('.toggle-icon');
+    if (icon) {
+      icon.textContent = block.classList.contains('collapsed') ? '►' : '▼';
+    }
+    // Definir título inicial para cabeçalhos de fases (expandir/recolher)
+    const headerEl = block.querySelector('.phase-header');
+    if (headerEl) {
+      headerEl.setAttribute('title', block.classList.contains('collapsed') ? 'Clique para expandir' : 'Clique para recolher');
+    }
+  });
+  // Atualizar a cor inicial do indicador de energia
+  const energiaEl = document.getElementById('ci-energia');
+  if (energiaEl) {
+    updateEnergyColor(parseInt(energiaEl.value) || 0);
+  }
+});
 
 </script>
 </body>
